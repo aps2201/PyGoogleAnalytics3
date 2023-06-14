@@ -1,4 +1,5 @@
 from DimensionsMetrics import *
+
 def init_query(viewId:str,
                start_date:str,
                end_date:str,
@@ -64,6 +65,8 @@ def init_query(viewId:str,
         'dimensions':dimensions,
         'dimensionFilterClauses':[{'operator':dimension_filter_logic ,'filters':dimensionFilterClauses}],
         'metrics':metrics,
-        'metricFilterClauses':[{'operator':metric_filter_logic ,'filters':metricFilterClauses}]
-                    }
+        'metricFilterClauses':[{'operator':metric_filter_logic ,'filters':metricFilterClauses}],
+        'pageToken': kwargs.get('page_token')
+
+    }
     return query_params
