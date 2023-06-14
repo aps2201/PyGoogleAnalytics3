@@ -1,13 +1,10 @@
-import random
+from GetReportData import Report
+# refer to https://developers.google.com/analytics/devguides/reporting/core/v3/errors#backoff
 import time
 from googleapiclient.errors import HttpError
+import random
 
-
-def makeRequest(analytics): # PLACEHOLDER
-    pass
-
-
-def makeRequestWithExponentialBackoff(analytics):
+def makeRequestWithExponentialBackoff(report:Report):
   """Wrapper to request Google Analytics data with exponential backoff.
 
   The makeRequest method accepts the analytics service object, makes API
@@ -22,7 +19,7 @@ def makeRequestWithExponentialBackoff(analytics):
   """
   for n in range(0, 5):
     try:
-      return makeRequest(analytics)
+      return Report.get_report_response(report)
 
     except HttpError as errors:
       if errors.resp.reason in ['userRateLimitExceeded', 'quotaExceeded',
