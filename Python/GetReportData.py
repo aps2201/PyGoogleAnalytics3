@@ -1,4 +1,7 @@
+from typing import Dict, List, Any
+
 from PaginateQuery import Paginate
+from SplitQueryDaywise import Daywise
 from googleapiclient.discovery import build
 from itertools import islice
 import time
@@ -10,9 +13,10 @@ class Report:
     The Report class contains to things: the credentials and the query parameters, you need this to pass it to
     the get_report function.
     """
-    def __init__(self,credentials,query_params):
+    def __init__(self,credentials,query_params,split_daywise:bool = False):
         self.credentials = credentials
         self.query_params = query_params
+        self.split = split_daywise
 
     def get_report_response(self):
         analytics = build('analyticsreporting', 'v4', credentials=self.credentials)
@@ -62,6 +66,16 @@ class Report:
                 for m in row['metrics'][0]['values']:
                     _data.append(m)
             return _data
+        def merge_header_data_dict(_header,_data):
+            data_split_ls = []
+            for i in range(0, len(_data), len(_header)):
+                data_split_ls.append(list(islice(_data, 0 + i, int(len(_header) + i))))
+            for i in range(int(len(_data) / len(_header))):
+                report_ls.append(dict(zip(_header, data_split_ls[i])))
+            return data_split_ls
+
+
+
 
         report = self.get_report()
         token = report.get('nextPageToken')
@@ -71,23 +85,41 @@ class Report:
         data = get_data(report)
 
         report_ls = []
-        data_split_ls = []
-        for i in range(0, len(data), len(header)):
-            data_split_ls.append(list(islice(data, 0 + i, int(len(header) + i))))
-        for i in range(int(len(data) / len(header))):
-            report_ls.append(dict(zip(header, data_split_ls[i])))
+        merge_header_data_dict(header,data)
         print(self.query_params)
         while token is not None:
             paginate = Paginate(token,True)
             paginate.paginate(self.query_params)
             report = self.get_report()
             data = get_data(report)
-            data_split_ls = []
-            for i in range(0, len(data), len(header)):
-                data_split_ls.append(list(islice(data, 0 + i, int(len(header) + i))))
-            for i in range(int(len(data) / len(header))):
-                report_ls.append(dict(zip(header, data_split_ls[i])))
+            merge_header_data_dict(header, data)
             token = report.get('nextPageToken')
             print(self.query_params)
-
+            time.sleep(1)
         return {'is_golden':is_golden,'data':data,'header':header,'report_ls':report_ls}
+
+    def split_daywise(self):
+        sdw = Daywise(self.query_params['dateRanges'][0]['startDate'],
+                      self.query_params['dateRanges'][0]['endDate'])
+        dates = sdw.date_strings()
+        print(dates)
+        dict_ls = []
+        split_report_ls_ls = []
+        split_data_ls = []
+        split_report_ls = []
+        print(self.split)
+        if self.split:
+            for x in dates:
+                self.query_params['dateRanges'][0]['startDate'] = x
+                self.query_params['dateRanges'][0]['endDate'] = x
+                dict_ls = self.get_report_dict_list()
+                split_data_ls.append(dict_ls['data'])
+                split_report_ls_ls.append(dict_ls['report_ls'])
+                time.sleep(1)
+            for r in split_report_ls_ls:
+                for s in r:
+                    split_report_ls.append(s)
+
+        return {'is_golden':dict_ls['is_golden'],'data':split_data_ls,
+                'header':dict_ls['header'],'report_ls':split_report_ls}
+

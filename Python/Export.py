@@ -14,7 +14,11 @@ class  Export:
             writer.writerows(self.report)
 
 def export_report_csv(report: Report, filename: str):
-    report_dict = Report.get_report_dict_list(report)
+    if report.split is not True:
+        report_dict = Report.get_report_dict_list(report)
+    else:
+        report_dict = Report.split_daywise(report)
     export = Export(filename+".csv", report_dict['report_ls'], report_dict['header'])
     Export.csv_export(export)
     return print("CSV {}.csv saved.".format(filename))
+
