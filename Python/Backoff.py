@@ -12,7 +12,7 @@ def makeRequestWithExponentialBackoff(report:Report):
   method is retried using exponential backoff.
 
   Args:
-    analytics: The analytics service object
+    report: The Report Class
 
   Returns:
     The API response from the makeRequest method.

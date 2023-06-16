@@ -14,6 +14,7 @@ from google.oauth2 import service_account
 #   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fivestones"
 # }
 def gauth(**creds):
+    credentials = None
     if 'cred_dict' in creds:
         credentials = service_account.Credentials.from_service_account_info(creds.get('cred_dict'))
     elif 'json_file' in creds:
