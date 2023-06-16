@@ -10,8 +10,8 @@ import random
 
 class Report:
     """
-    The Report class contains to things: the credentials and the query parameters, you need this to pass it to
-    the get_report function.
+    The Report class contains to things: the credentials and the query parameters,
+    you need this to pass it to the get_report function.
     """
     def __init__(self,credentials,query_params,split_daywise:bool = False):
         self.credentials = credentials
@@ -45,6 +45,10 @@ class Report:
         """
         The data is saved as a list of dicts for easier exporting to different formats.
         """
+        def get_sampling(_report):
+            if _report['data'].get('samplesReadCounts') is not None:
+                return {'samplesReadCounts':_report['data']['samplesReadCounts'],
+                        'samplingSpaceSizes':_report['data']['samplingSpaceSizes']}
         def get_golden(_report):
             if _report['data']['isDataGolden']:
                 return _report['data']['isDataGolden']
@@ -80,6 +84,7 @@ class Report:
         report = self.get_report()
         token = report.get('nextPageToken')
 
+        sampling = get_sampling(report)
         is_golden = get_golden(report)
         header = get_header(report)
         data = get_data(report)
@@ -87,6 +92,8 @@ class Report:
         report_ls = []
         merge_header_data_dict(header,data)
         print(self.query_params)
+        print(sampling)
+        print("Data is golden:"+is_golden.__str__())
         while token is not None:
             paginate = Paginate(token,True)
             paginate.paginate(self.query_params)
@@ -96,7 +103,8 @@ class Report:
             token = report.get('nextPageToken')
             print(self.query_params)
             time.sleep(1)
-        return {'is_golden':is_golden,'data':data,'header':header,'report_ls':report_ls}
+        return {'is_golden':is_golden,'data':data,'header':header,
+                'report_ls':report_ls,'sampling':sampling}
 
     def split_daywise(self):
         sdw = Daywise(self.query_params['dateRanges'][0]['startDate'],
