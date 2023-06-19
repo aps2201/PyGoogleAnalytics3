@@ -17,9 +17,12 @@ def init_query(viewId:str,
     :param end_date: format YYYY-MM-DD
     :param dimensions: accepts the Dimensions class (can take multiple dimensions), no need to add "ga:" prefix, just
                        the dimension name.
-                       e.g., Dimensions("browser","sourceMedium) PS:
-                       always hated the redundancy
-    :param metrics: accepts the Metrics class. e.g, Metrics("users","hits")
+                       e.g., Dimensions("browser","sourceMedium)
+                       API limit is 9 dimensions.
+                       PS: always hated the redundancy
+    :param metrics: accepts the Metrics class.
+                    e.g, Metrics("users","hits").
+                    API limit is 10 metrics.
     :param samplingLevel: refer to https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#Sampling
     :param dimension_filter_logic: default 'OR' can be 'AND'
     :param metric_filter_logic: default 'OR' can be 'AND'

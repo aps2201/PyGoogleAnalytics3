@@ -2,6 +2,7 @@ class Dimensions:
     """
     Stores multiple dimensions, does not require 'ga:' prefix.\n
     e.g., Dimensions("browser","sourceMedium)
+    API limit is 9 dimensions.
     """
     def __init__(self,*dims):
         self.dimensions=dims
@@ -44,6 +45,7 @@ class Metrics:
     """
     Stores multiple metrics, does not require 'ga:' prefix.\n
     e.g, Metrics("users","hits")
+    API limit is 10 metrics.
     """
     def __init__(self,*metrics):
         self.metrics = metrics
