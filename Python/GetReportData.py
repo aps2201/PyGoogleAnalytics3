@@ -71,7 +71,6 @@ class Report:
                     _data.append(m)
             return _data
         def merge_header_data_dict(_header,_data):
-            data_split_ls = []
             for i in range(0, len(_data), len(_header)):
                 data_split_ls.append(list(islice(_data, 0 + i, int(len(_header) + i))))
             for i in range(int(len(_data) / len(_header))):
@@ -89,6 +88,7 @@ class Report:
         header = get_header(report)
         data = get_data(report)
 
+        data_split_ls = []
         report_ls = []
         merge_header_data_dict(header,data)
         print(self.query_params)
@@ -103,7 +103,7 @@ class Report:
             token = report.get('nextPageToken')
             print(self.query_params)
             time.sleep(1)
-        return {'is_golden':is_golden,'data':data,'header':header,
+        return {'is_golden':is_golden,'data':data_split_ls,'header':header,
                 'report_ls':report_ls,'sampling':sampling}
 
     def split_daywise(self):
