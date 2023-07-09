@@ -53,4 +53,3 @@ def gauth(*login,**creds):
         credentials = flow.credentials
 
     return credentials
-# TODO: add user oauth
