@@ -1,5 +1,3 @@
-from typing import Dict, List, Any
-
 from PaginateQuery import Paginate
 from SplitQueryDaywise import Daywise
 from googleapiclient.discovery import build
