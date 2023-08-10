@@ -11,7 +11,6 @@ class Daywise:
         start_date = datetime.strptime(self.start_date,"%Y-%m-%d")
         end_date = datetime.strptime(self.end_date,"%Y-%m-%d")
         date_delta = end_date - start_date
-        print(date_delta)
         for dates in range(date_delta.days):
             date_ls.append(start_date + timedelta(dates))
         date_ls.append(end_date)
